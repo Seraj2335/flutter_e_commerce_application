@@ -3,7 +3,6 @@ import 'package:badges/badges.dart';
 import 'package:flutter_e_commerce_application/itemCart.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_e_commerce_application/logInPage.dart';
 
 class ItemPage extends StatefulWidget {
   @override
@@ -35,9 +34,19 @@ class _ItemPageState extends State<ItemPage> {
               padding: EdgeInsets.only(right: 10, top: 5),
               child: IconButton(
                 onPressed: () {
-                  CircularProgressIndicator(
-                    color: Colors.blue,
-                  );
+                  showDialog(
+                      context: context,
+                      builder: (context) => Container(
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            margin: EdgeInsets.only(
+                                top: 270, bottom: 270, left: 35, right: 35),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                          ));
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Kart()));
                 },

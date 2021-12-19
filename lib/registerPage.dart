@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter_e_commerce_application/informationPage.dart';
 import 'package:flutter_e_commerce_application/logInPage.dart';
+import 'companyRegisterPage.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late String email;
   late String phoneNumber;
   late String password;
+  bool value = false;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   @override
@@ -91,15 +93,35 @@ class _RegisterPageState extends State<RegisterPage> {
               primary: Colors.blueAccent,
               padding: EdgeInsets.only(top: 15, bottom: 15)),
           onPressed: () async {
-            await _auth.createUserWithEmailAndPassword(
-                email: email, password: password);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GreetingPage()));
+            try {
+              setState(() {
+                value = !value;
+              });
+              Center(
+                child: CircularProgressIndicator(),
+              );
+              Future.delayed(Duration(microseconds: 3500));
+              // await _auth.createUserWithEmailAndPassword(
+              //     email: email, password: password);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GreetingPage()));
+            } catch (e) {
+              print('Hello');
+            }
           },
-          child: Text(
-            'REGISTER',
-            style: TextStyle(fontSize: 19, letterSpacing: 1),
-          ),
+          child: value
+              ? SizedBox(
+                  height: 15,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3,
+                  ),
+                )
+              : Text(
+                  'Register',
+                  style: TextStyle(fontSize: 19, letterSpacing: 1),
+                ),
         ),
         Row(
           children: [
@@ -118,6 +140,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 ))
           ],
         ),
+        Center(
+          child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CompanyRegisterPage()));
+              },
+              child: Text('Register Compnay')),
+        )
       ],
     );
   }

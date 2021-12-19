@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:bloc/bloc.dart';
+// import 'package:bloc/bloc.dart';
 
 FirebaseFirestore store = FirebaseFirestore.instance;
 
@@ -13,6 +13,7 @@ class _KartState extends State<Kart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Center(child: Text('Your kart items')),
@@ -31,7 +32,7 @@ class _KartState extends State<Kart> {
                   return Container(
                     width: 100,
                     height: 132,
-                    padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
                     margin: EdgeInsets.only(bottom: 2),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -75,11 +76,15 @@ class _KartState extends State<Kart> {
                                   child: Row(
                                     children: [
                                       TextButton(
-                                          onPressed: null,
+                                          onPressed: () {
+                                            // hello
+                                          },
                                           child: Icon(Icons.add)),
                                       Text('0'),
                                       TextButton(
-                                          onPressed: null,
+                                          onPressed: () {
+                                            // hello
+                                          },
                                           child: Center(
                                               child: Icon(Icons.remove))),
                                     ],
