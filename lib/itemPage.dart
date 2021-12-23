@@ -3,8 +3,12 @@ import 'package:badges/badges.dart';
 import 'package:flutter_e_commerce_application/itemCart.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_e_commerce_application/orderPage.dart';
+import 'package:flutter_e_commerce_application/orders.dart';
 
 class ItemPage extends StatefulWidget {
+  final String email;
+  ItemPage({required this.email});
   @override
   State<ItemPage> createState() => _ItemPageState();
 }
@@ -12,6 +16,7 @@ class ItemPage extends StatefulWidget {
 FirebaseFirestore store = FirebaseFirestore.instance;
 
 class _ItemPageState extends State<ItemPage> {
+  late int index;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +25,12 @@ class _ItemPageState extends State<ItemPage> {
           actions: [
             TextButton(
                 onPressed: () {
-                  // Hello
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Orders(
+                                email: widget.email,
+                              )));
                 },
                 child: Text(
                   'Orders',
@@ -70,33 +80,66 @@ class _ItemPageState extends State<ItemPage> {
           ],
           title: Center(child: Text('E-Commerce')),
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                  child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                padding: EdgeInsets.only(top: 10, bottom: 10, right: 110),
-                child: CircleAvatar(child: Icon(Icons.person_outline)),
-              )),
-              ListTile(
-                  leading: Icon(Icons.email_outlined),
-                  title: Text('kseraj96@gmail.com'),
-                  trailing: TextButton(
-                    child: Text('Edit'),
-                    onPressed: () {
-                      // Hello
-                    },
-                  )),
-              ListTile(
-                leading: Icon(Icons.phone_outlined),
-                title: Text('9151362335'),
-              ),
-            ],
-          ),
-        ),
+        drawer: StreamBuilder<QuerySnapshot>(
+            stream: store.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final userData = snapshot.data!.docs;
+                final listData = [];
+                for (var user in userData) {
+                  listData.add(user.data());
+                }
+                for (int i = 0; i < listData.length; i++) {
+                  if (listData[i]['email'] == widget.email) {
+                    index = i;
+                    break;
+                  }
+                }
+                return Drawer(
+                  child: ListView(
+                    children: <Widget>[
+                      DrawerHeader(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        padding: EdgeInsets.only(
+                            top: 10, bottom: 10, right: 110, left: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                                radius: 40, child: Icon(Icons.person_outline)),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              listData[index]['name'],
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 19),
+                            )
+                          ],
+                        ),
+                      )),
+                      ListTile(
+                          leading: Icon(Icons.email_outlined),
+                          title: Text(listData[index]['email']),
+                          trailing: TextButton(
+                            child: Text('Edit'),
+                            onPressed: () {
+                              // Hello
+                            },
+                          )),
+                      ListTile(
+                        leading: Icon(Icons.phone_outlined),
+                        title: Text(listData[index]['phoneNumber']),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return Center(child: CircularProgressIndicator());
+            }),
         backgroundColor: Colors.white70,
         body: StreamBuilder<QuerySnapshot>(
             stream: store.collection('items').snapshots(),
@@ -134,7 +177,7 @@ class _ItemPageState extends State<ItemPage> {
                                 style: TextStyle(fontSize: 19),
                               ),
                               Text(
-                                "Rs." + arr[index]['price'].toString() + "90",
+                                "Rs." + arr[index]['price'].toString(),
                                 style:
                                     TextStyle(fontSize: 18, color: Colors.grey),
                               ),
@@ -151,7 +194,16 @@ class _ItemPageState extends State<ItemPage> {
                                           backgroundColor:
                                               Colors.lightBlueAccent[700]),
                                       onPressed: () {
-                                        // not yet defined
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => Container(
+                                                  child: OrderPage(
+                                                    index: index,
+                                                    email: widget.email,
+                                                    productImage: arr[index]
+                                                        ['productImage'],
+                                                  ),
+                                                ));
                                       },
                                       child: Text(
                                         'Buy Now',
